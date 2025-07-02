@@ -21,7 +21,7 @@ jobs:
 
       - name: Build Windows App
         run: yarn win
-          env:
+        env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Upload Windows Artifact
