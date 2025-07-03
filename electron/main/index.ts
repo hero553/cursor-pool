@@ -6,7 +6,6 @@ import os from 'node:os'
 import { MainProcess } from './main-process'
 import { killCursorProcess } from './utils'
 import { switchAccount } from './service/cursor-account-service'
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -44,63 +43,6 @@ let win: BrowserWindow | null = null
 const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
 
-// --- ps-list 猴子补丁，修正 asar.unpacked 路径 ---
-import log from 'electron-log';
-if (process.platform === 'win32') {
-  const fs = require('fs');
-  const Module = require('module');
-  const path = require('path');
-  log.info('ps-list monkey patch loaded!');
-  const originalRequire = Module.prototype.require;
-  Module.prototype.require = function (request) {
-    if (request === 'ps-list') {
-      const psList = originalRequire.apply(this, arguments);
-      // 只 patch windows 方法
-      if (typeof psList === 'function' && psList.name === 'windows') {
-        log.info('ps-list windows method patched!');
-        psList.windows = async function () {
-          let binary;
-          switch (process.arch) {
-            case 'x64':
-              binary = 'fastlist-0.3.0-x64.exe';
-              break;
-            case 'ia32':
-              binary = 'fastlist-0.3.0-x86.exe';
-              break;
-            default:
-              throw new Error(`Unsupported architecture: ${process.arch}`);
-          }
-          const binaryPath = path.join(
-            process.resourcesPath,
-            'app.asar.unpacked',
-            'node_modules',
-            'ps-list',
-            'vendor',
-            binary
-          );
-          console.log('ps-list fastlist exe 路径:', binaryPath);
-          const { execFile } = require('child_process').promises;
-          const { stdout } = await execFile(binaryPath, {
-            maxBuffer: 1000 * 1000 * 10,
-            windowsHide: true,
-          });
-          return stdout
-            .trim()
-            .split('\r\n')
-            .map(line => line.split('\t'))
-            .map(([pid, ppid, name]) => ({
-              pid: Number.parseInt(pid, 10),
-              ppid: Number.parseInt(ppid, 10),
-              name,
-            }));
-        };
-      }
-      return psList;
-    }
-    return originalRequire.apply(this, arguments);
-  };
-}
-// --- ps-list 猴子补丁结束 ---
 
 async function createWindow() {
   win = new BrowserWindow({

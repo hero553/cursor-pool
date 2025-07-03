@@ -1,11 +1,11 @@
 // utils/processUtils.ts
-import psList from 'ps-list';
+import { getProcessList } from './process-list';
 
 export async function killCursorProcess(): Promise<boolean> {
   // 常见的 Cursor 进程名
   const processNames = ['Cursor', 'Cursor.exe', 'cursor'];
-  const list = await psList();
 
+  const list = await getProcessList();
   // 找到所有 Cursor 进程
   const targets = list.filter(
     p => processNames.includes(p.name)
