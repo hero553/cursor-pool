@@ -8,7 +8,32 @@ import sqlite3 from 'sqlite3';
 import os from 'os'
 import psList from 'ps-list'
 import { CursorIds, BackupInfo } from '../../types/cursor';
+// import { createRequire } from 'node:module';
+// const require = createRequire(import.meta.url);
 
+
+
+// if (process.platform) {
+//   // 手动拼接补丁后的 fastlist 路径
+//   const path = require('path');
+//   const exePath = path.join(
+//     process.resourcesPath,
+//     'app.asar.unpacked',
+//     'node_modules',
+//     'ps-list',
+//     'vendor',
+//     process.arch === 'x64' ? 'fastlist-0.3.0-x64.exe' : 'fastlist-0.3.0-x86.exe'
+//   );
+//   console.log('ps-list fastlist exe 路径:', exePath);
+
+//   // 检查文件是否存在
+//   const fs = require('fs');
+//   if (fs.existsSync(exePath)) {
+//     console.log('fastlist exe 存在！');
+//   } else {
+//     console.log('fastlist exe 不存在！');
+//   }
+// }
 export class CursorUtils {
   /**
    * 生成新的机器ID
