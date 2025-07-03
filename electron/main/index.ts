@@ -45,16 +45,19 @@ const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
 
 // --- ps-list 猴子补丁，修正 asar.unpacked 路径 ---
+import log from 'electron-log';
 if (process.platform === 'win32') {
   const fs = require('fs');
   const Module = require('module');
   const path = require('path');
+  log.info('ps-list monkey patch loaded!');
   const originalRequire = Module.prototype.require;
   Module.prototype.require = function (request) {
     if (request === 'ps-list') {
       const psList = originalRequire.apply(this, arguments);
       // 只 patch windows 方法
       if (typeof psList === 'function' && psList.name === 'windows') {
+        log.info('ps-list windows method patched!');
         psList.windows = async function () {
           let binary;
           switch (process.arch) {
@@ -75,6 +78,7 @@ if (process.platform === 'win32') {
             'vendor',
             binary
           );
+          console.log('ps-list fastlist exe 路径:', binaryPath);
           const { execFile } = require('child_process').promises;
           const { stdout } = await execFile(binaryPath, {
             maxBuffer: 1000 * 1000 * 10,
