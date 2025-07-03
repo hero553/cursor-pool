@@ -9,7 +9,8 @@
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+    "node_modules/ps-list/vendor/**"
   ],
   "mac": {
     "icon": "public/icons/icon.ico",
@@ -45,14 +46,5 @@
       "AppImage"
     ],
     "artifactName": "${productName}-Linux-${version}.${ext}"
-  },
-  "extraResources": [
-    {
-      "from": "node_modules/ps-list/vendor/fastlist-0.3.0-x64.exe",
-      "to": "vendor/fastlist-0.3.0-x64.exe"
-    }
-  ],
-  "asarUnpack": [
-    "node_modules/ps-list/vendor/fastlist-0.3.0-x64.exe"
-  ]
+  }
 }
