@@ -9,6 +9,7 @@
   },
   "files": [
     "dist",
+    "dist-electron"
   ],
   "mac": {
     "icon": "public/icons/icon.ico",
